@@ -22,9 +22,7 @@ class TransportDetector(Detector):
         try:
             ctx = ProbeContext.model_validate(context)
         except Exception as exc:
-            return self._finding(
-                DetectorStatus.FAILED, 0.0, error=f"Invalid context: {exc}"
-            )
+            return self._finding(DetectorStatus.FAILED, 0.0, error=f"Invalid context: {exc}")
 
         url = target if target.startswith("http") else f"https://{target}"
         if not url.endswith(ctx.probe_paths[0]):

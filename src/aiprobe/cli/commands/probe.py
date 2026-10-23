@@ -7,7 +7,6 @@ import re
 import sys
 from enum import StrEnum
 from pathlib import Path
-from typing import Optional
 
 import typer
 
@@ -33,15 +32,19 @@ class OutputFormat(StrEnum):
 
 def probe_cmd(
     target: str = typer.Argument(..., help="Target domain or URL"),
-    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Save to a specific file."),
-    out_dir: Optional[Path] = typer.Option(None, "--out-dir", help="Directory to auto-save all formats."),
-    format: OutputFormat = typer.Option(OutputFormat.yaml, "--format", help="Output format if printing to stdout."),
+    output: Path | None = typer.Option(None, "--output", "-o", help="Save to a specific file."),
+    out_dir: Path | None = typer.Option(
+        None, "--out-dir", help="Directory to auto-save all formats."
+    ),
+    format: OutputFormat = typer.Option(
+        OutputFormat.yaml, "--format", help="Output format if printing to stdout."
+    ),
 ) -> None:
     """Run the full pipeline and output a profile."""
     asyncio.run(_probe(target, output, out_dir, format))
 
 
-async def _probe(target: str, output: Optional[Path], out_dir: Optional[Path], fmt: OutputFormat) -> None:
+async def _probe(target: str, output: Path | None, out_dir: Path | None, fmt: OutputFormat) -> None:
     base_target = target if target.startswith("http") else f"https://{target}"
 
     # Extraer el dominio limpio para usarlo como nombre de carpeta
@@ -108,9 +111,9 @@ async def _probe(target: str, output: Optional[Path], out_dir: Optional[Path], f
         (target_dir / "report.md").write_text(render_markdown(profile, findings), encoding="utf-8")
 
         typer.secho(f"All outputs saved to {target_dir}/", fg="green")
-        typer.secho(f"  - profile.yaml", fg="green")
-        typer.secho(f"  - profile.json", fg="green")
-        typer.secho(f"  - report.md", fg="green")
+        typer.secho("  - profile.yaml", fg="green")
+        typer.secho("  - profile.json", fg="green")
+        typer.secho("  - report.md", fg="green")
         return
 
     # --- Lógica de guardado manual (legacy) ---

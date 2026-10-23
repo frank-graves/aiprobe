@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 from enum import StrEnum
 from typing import Any
 
@@ -32,7 +31,9 @@ class EndpointStatus(StrEnum):
     ERROR = "error"
 
 
-def _classify_status(code: int, content_type: str = "", body: bytes = b"") -> tuple[EndpointStatus, float]:
+def _classify_status(
+    code: int, content_type: str = "", body: bytes = b""
+) -> tuple[EndpointStatus, float]:
     """Classify HTTP status codes into EndpointStatus and confidence."""
     if 200 <= code < 300:
         # 1. Falso positivo clásico: Devuelve HTML en lugar de JSON (SPA)
@@ -75,9 +76,7 @@ class EndpointsDetector(Detector):
         try:
             ctx = ProbeContext.model_validate(context)
         except Exception as exc:
-            return self._finding(
-                DetectorStatus.FAILED, 0.0, error=f"Invalid context: {exc}"
-            )
+            return self._finding(DetectorStatus.FAILED, 0.0, error=f"Invalid context: {exc}")
 
         base_url = target.rstrip("/")
         candidates = generate_candidates(ctx.provider_spec)
@@ -88,15 +87,17 @@ class EndpointsDetector(Detector):
                 resp = await ctx.client.get(base_url + "/")
                 if resp.ok():
                     discovered = extract_paths_from_html(resp.text())
-                    for p in list(discovered)[:ctx.max_bundle_paths]:
+                    for p in list(discovered)[: ctx.max_bundle_paths]:
                         bundle_discovered.append(p)
                         if not any(c.path == p for c in candidates):
-                            candidates.append(EndpointCandidate(
-                                name=p.strip("/").split("/")[-1],
-                                path=p,
-                                method="GET",
-                                source="bundle"
-                            ))
+                            candidates.append(
+                                EndpointCandidate(
+                                    name=p.strip("/").split("/")[-1],
+                                    path=p,
+                                    method="GET",
+                                    source="bundle",
+                                )
+                            )
             except Exception as exc:
                 logger.warning(f"Failed to parse bundles: {exc}")
 
@@ -123,15 +124,14 @@ class EndpointsDetector(Detector):
                         if allow:
                             allowed_method = allow.split(",")[0].strip().upper()
                             if allowed_method and allowed_method != current_method:
-                                retry_resp = await ctx.client.request(
-                                    allowed_method, url, **kwargs
-                                )
+                                retry_resp = await ctx.client.request(allowed_method, url, **kwargs)
                                 retry_ct = retry_resp.headers.get("content-type", "").lower()
                                 retry_status, retry_conf = _classify_status(
                                     retry_resp.status_code, retry_ct, retry_resp.content
                                 )
                                 if retry_status not in (
-                                    EndpointStatus.ERROR, EndpointStatus.UNKNOWN
+                                    EndpointStatus.ERROR,
+                                    EndpointStatus.UNKNOWN,
                                 ):
                                     status = retry_status
                                     conf = retry_conf
@@ -149,7 +149,7 @@ class EndpointsDetector(Detector):
                             "evidence": {
                                 "status_code": resp.status_code,
                                 "content_type": content_type or "missing",
-                                "body_snippet": resp.text()[:50] if resp.content else ""
+                                "body_snippet": resp.text()[:50] if resp.content else "",
                             },
                             "source": cand.source,
                         }
@@ -174,8 +174,7 @@ class EndpointsDetector(Detector):
         not_found_data: dict[str, Any] = {}
 
         sorted_results = sorted(
-            results.values(),
-            key=lambda x: (-x["confidence"], x["source"] != "provider")
+            results.values(), key=lambda x: (-x["confidence"], x["source"] != "provider")
         )
 
         for res in sorted_results:

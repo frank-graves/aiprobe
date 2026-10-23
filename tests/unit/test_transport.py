@@ -17,18 +17,18 @@ def make_context(client: FakeHttpClient) -> dict[str, object]:
 
 @pytest.mark.asyncio
 async def test_http2_required() -> None:
-    ok_resp = HttpResponse(
-        status_code=200, headers={}, url="https://example.com", content=b"OK"
-    )
+    ok_resp = HttpResponse(status_code=200, headers={}, url="https://example.com", content=b"OK")
     fail_resp = HttpResponse(
         status_code=403, headers={}, url="https://example.com", content=b"Blocked"
     )
 
-    client = FakeHttpClient({
-        "GET:https://example.com/:None:1": fail_resp,
-        "GET:https://example.com/:None:None": ok_resp,
-        "GET:https://example.com/:chrome:None": ok_resp,
-    })
+    client = FakeHttpClient(
+        {
+            "GET:https://example.com/:None:1": fail_resp,
+            "GET:https://example.com/:None:None": ok_resp,
+            "GET:https://example.com/:chrome:None": ok_resp,
+        }
+    )
     detector = TransportDetector()
     finding = await detector.run("https://example.com", make_context(client))
     assert finding.status == DetectorStatus.DETECTED
@@ -37,18 +37,18 @@ async def test_http2_required() -> None:
 
 @pytest.mark.asyncio
 async def test_tls_fingerprint_required() -> None:
-    ok_resp = HttpResponse(
-        status_code=200, headers={}, url="https://example.com", content=b"OK"
-    )
+    ok_resp = HttpResponse(status_code=200, headers={}, url="https://example.com", content=b"OK")
     fail_resp = HttpResponse(
         status_code=403, headers={}, url="https://example.com", content=b"Blocked"
     )
 
-    client = FakeHttpClient({
-        "GET:https://example.com/:chrome:None": ok_resp,
-        "GET:https://example.com/:None:None": fail_resp,
-        "GET:https://example.com/:None:1": ok_resp,
-    })
+    client = FakeHttpClient(
+        {
+            "GET:https://example.com/:chrome:None": ok_resp,
+            "GET:https://example.com/:None:None": fail_resp,
+            "GET:https://example.com/:None:1": ok_resp,
+        }
+    )
     detector = TransportDetector()
     finding = await detector.run("https://example.com", make_context(client))
     assert finding.status == DetectorStatus.DETECTED

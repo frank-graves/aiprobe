@@ -4,9 +4,6 @@ from __future__ import annotations
 
 import time
 from datetime import UTC, datetime
-from typing import Any
-
-import aiprobe.detectors  # <-- Importante para el auto-registro
 
 from aiprobe.core.browser import BrowserDriver
 from aiprobe.core.pipeline import PipelineStep
@@ -16,12 +13,12 @@ from aiprobe.detectors.base import DETECTORS
 from aiprobe.detectors.context import ProbeContext
 from aiprobe.models.findings import DetectorCost, DetectorStatus, Finding
 from aiprobe.models.profile import (
+    CURRENT_SCHEMA_VERSION,
     AntibotInfo,
     AntibotType,
     AuthInfo,
     AuthScheme,
     BypassStrategy,
-    CURRENT_SCHEMA_VERSION,
     EndpointInfo,
     Profile,
     SchemaCompat,
@@ -91,8 +88,7 @@ class Orchestrator:
                     req
                     for req in step.requires
                     if req not in findings
-                    or findings[req].status
-                    in (DetectorStatus.FAILED, DetectorStatus.SKIPPED)
+                    or findings[req].status in (DetectorStatus.FAILED, DetectorStatus.SKIPPED)
                 ]
 
                 if failed_deps:
@@ -183,10 +179,7 @@ class Orchestrator:
                     )
 
                 # Update context for next steps
-                if (
-                    step.detector == "endpoints"
-                    and finding.status == DetectorStatus.DETECTED
-                ):
+                if step.detector == "endpoints" and finding.status == DetectorStatus.DETECTED:
                     eps_data = finding.data.get("endpoints", {})
                     context.endpoints = {}
                     for name, e in eps_data.items():
@@ -202,26 +195,19 @@ class Orchestrator:
 
         return findings
 
-    async def assemble_profile(
-        self, target: str, findings: dict[str, Finding]
-    ) -> Profile:
+    async def assemble_profile(self, target: str, findings: dict[str, Finding]) -> Profile:
         """Map the raw findings into a structured Profile."""
         # (Resto del código igual...)
         transport = TransportInfo(http2=False, tls_fingerprint=None)
         antibot = AntibotInfo(type=AntibotType.NONE, bypass=BypassStrategy.NONE)
-        auth = AuthInfo(
-            scheme=AuthScheme.NONE, cookies=[], refresh=BypassStrategy.NONE
-        )
+        auth = AuthInfo(scheme=AuthScheme.NONE, cookies=[], refresh=BypassStrategy.NONE)
         endpoints: dict[str, EndpointInfo] = {}
         stream_format = StreamFormat.NONE
         tool_calling = False
         schema_compat = SchemaCompat.UNKNOWN
         notes_list = []
 
-        if (
-            "transport" in findings
-            and findings["transport"].status == DetectorStatus.DETECTED
-        ):
+        if "transport" in findings and findings["transport"].status == DetectorStatus.DETECTED:
             d = findings["transport"].data
             req_headers = d.get("required_headers", [])
             notes = f"Required headers: {', '.join(req_headers)}" if req_headers else None
@@ -231,10 +217,7 @@ class Orchestrator:
                 notes=notes,
             )
 
-        if (
-            "antibot" in findings
-            and findings["antibot"].status == DetectorStatus.DETECTED
-        ):
+        if "antibot" in findings and findings["antibot"].status == DetectorStatus.DETECTED:
             d = findings["antibot"].data
             antibot = AntibotInfo(
                 type=AntibotType(d.get("type", "unknown")),
@@ -250,10 +233,7 @@ class Orchestrator:
                 refresh=BypassStrategy(d.get("refresh", "none")),
             )
 
-        if (
-            "endpoints" in findings
-            and findings["endpoints"].status == DetectorStatus.DETECTED
-        ):
+        if "endpoints" in findings and findings["endpoints"].status == DetectorStatus.DETECTED:
             eps_data = findings["endpoints"].data.get("endpoints", {})
             for name, e in eps_data.items():
                 endpoints[name] = EndpointInfo(
@@ -263,10 +243,7 @@ class Orchestrator:
                     validated=e.get("confidence", 0.0) > 0.8,
                 )
 
-        if (
-            "streaming" in findings
-            and findings["streaming"].status == DetectorStatus.DETECTED
-        ):
+        if "streaming" in findings and findings["streaming"].status == DetectorStatus.DETECTED:
             d = findings["streaming"].data
             stream_format = StreamFormat(d.get("format", "unknown"))
 

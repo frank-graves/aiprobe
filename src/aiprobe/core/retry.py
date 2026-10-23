@@ -69,8 +69,7 @@ def honor_retry_after(headers: dict[str, str], policy: RetryPolicy) -> float | N
 class Sleeper(Protocol):
     """Protocol for injectable sleeping."""
 
-    async def sleep(self, seconds: float) -> None:
-        ...
+    async def sleep(self, seconds: float) -> None: ...
 
 
 class AsyncSleeper:
