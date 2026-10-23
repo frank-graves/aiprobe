@@ -1,0 +1,32 @@
+schema_version: 1
+target: https://chat.qwen.ai
+detected_at: '2026-10-23T12:00:00+00:00'
+antibot:
+  type: cf-tls
+  bypass: curl_cffi
+  impersonate: chrome
+  notes: null
+transport:
+  http2: true
+  tls_fingerprint: chrome
+  notes: null
+auth:
+  scheme: cookie
+  cookies:
+    - token
+  refresh: none
+endpoints:
+  chat:
+    path: /api/v2/chat/completions
+    method: POST
+    requires_auth: true
+    validated: true
+  models:
+    path: /api/v2/models
+    method: GET
+    requires_auth: false
+    validated: true
+stream_format: sse
+tool_calling: false
+schema_compat: custom
+notes: Example profile. Regenerate against the live target for accurate results.

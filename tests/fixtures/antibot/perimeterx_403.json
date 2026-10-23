@@ -1,0 +1,8 @@
+{
+  "status_code": 403,
+  "headers": {
+    "x-px-block": "1"
+  },
+  "body": "Access to this page has been denied",
+  "url": "https://example.com"
+}

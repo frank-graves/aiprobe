@@ -1,0 +1,8 @@
+{
+  "status_code": 403,
+  "headers": {
+    "x-iinfo": "12345-67890"
+  },
+  "body": "<html>Incapsula incident ID: 12345-67890</html>",
+  "url": "https://example.com"
+}

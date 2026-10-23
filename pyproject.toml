@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aiprobe"
+version = "0.1.0"
+description = "FOSS CLI to probe and profile the internal APIs of AI web apps."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "aiprobe contributors" }]
+keywords = ["ai", "probe", "recon", "curl-cffi", "pydantic"]
+
+dependencies = [
+    "pydantic>=2.7",
+    "curl_cffi>=0.7",
+    "typer>=0.12",
+    "pyyaml>=6.0",
+    "cryptography>=42",
+]
+
+[project.optional-dependencies]
+browser = ["patchright>=1.0", "camoufox>=0.4"]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.scripts]
+aiprobe = "aiprobe.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aiprobe"]
+
+# ── ruff ────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"] # Typer requiere llamar a typer.Option() en los defaults
+
+[tool.ruff.lint.isort]
+known-first-party = ["aiprobe"]
+
+# ── mypy ────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["yaml"]
+ignore_missing_imports = true
+
+# ── pytest ──────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "network: tests that hit the real network (skipped by default in CI)",
+]
+addopts = "-ra"

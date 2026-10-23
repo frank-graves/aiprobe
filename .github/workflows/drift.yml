@@ -1,0 +1,30 @@
+name: Drift Detection
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Weekly on Sunday
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install aiprobe
+      run: pip install -e .
+    - name: Validate profiles
+      run: aiprobe validate --all --json > drift_report.json || echo "DRIFT_EXIT_CODE=$?" >> $GITHUB_ENV
+    - name: Upload drift report
+      uses: actions/upload-artifact@v4
+      with:
+        name: drift-report
+        path: drift_report.json
+    - name: Check for drift
+      if: env.DRIFT_EXIT_CODE == '2'
+      run: |
+        echo "Drift detected!"
+        exit 1

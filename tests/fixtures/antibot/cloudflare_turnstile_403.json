@@ -1,0 +1,8 @@
+{
+  "status_code": 403,
+  "headers": {
+    "server": "cloudflare"
+  },
+  "body": "<html><script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\"></script></html>",
+  "url": "https://example.com"
+}

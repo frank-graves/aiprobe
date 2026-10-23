@@ -1,0 +1,20 @@
+name: Live Integration Tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily
+  workflow_dispatch:
+
+jobs:
+  network-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
+      run: pip install -e ".[dev]"
+    - name: Run network tests
+      run: pytest -m network

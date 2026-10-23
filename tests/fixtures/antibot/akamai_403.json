@@ -1,0 +1,9 @@
+{
+  "status_code": 403,
+  "headers": {
+    "server": "AkamaiGHost",
+    "akamai-grn": "0.12345678.1234567890.12345678"
+  },
+  "body": "Access Denied",
+  "url": "https://example.com"
+}

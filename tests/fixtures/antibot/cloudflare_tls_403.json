@@ -1,0 +1,10 @@
+{
+  "status_code": 403,
+  "headers": {
+    "server": "cloudflare",
+    "cf-ray": "8a1b2c3d4e5f",
+    "cf-mitigated": "challenge"
+  },
+  "body": "Access denied",
+  "url": "https://example.com"
+}

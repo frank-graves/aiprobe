@@ -1,0 +1,3 @@
+{"id":"1","choices":[{"delta":{"content":"Hello"}}]}
+{"id":"1","choices":[{"delta":{"content":" world"}}]}
+{"id":"1","choices":[],"finish_reason":"stop"}

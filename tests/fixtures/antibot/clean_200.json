@@ -1,0 +1,8 @@
+{
+  "status_code": 200,
+  "headers": {
+    "content-type": "text/html"
+  },
+  "body": "<html>Welcome to our API</html>",
+  "url": "https://example.com"
+}

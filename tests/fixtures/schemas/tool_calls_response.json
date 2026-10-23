@@ -1,0 +1,23 @@
+{
+  "id": "chatcmpl-123",
+  "object": "chat.completion",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_123",
+            "type": "function",
+            "function": {
+              "name": "ping",
+              "arguments": "{}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ]
+}

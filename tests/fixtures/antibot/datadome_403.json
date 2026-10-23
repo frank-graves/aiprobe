@@ -1,0 +1,8 @@
+{
+  "status_code": 403,
+  "headers": {
+    "x-datadome": "protected"
+  },
+  "body": "Blocked by DataDome",
+  "url": "https://example.com"
+}

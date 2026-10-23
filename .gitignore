@@ -1,0 +1,41 @@
+# Byte-compiled / caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+
+# aiprobe runtime
+.aiprobe/
+*.local.yaml
+reporte_*.md
+
+# Entornos virtuales
+.venv/
+venv/
+.env
+
+# Tooling caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+
+# Build artifacts
+build/
+dist/
+wheels/
+*.whl
+*.tar.gz
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# aiprobe runtime
+profiles/*.local.yaml
+*.enc
