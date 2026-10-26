@@ -26,7 +26,7 @@ Ensure you have Python 3.12+ installed.
 
 ```bash
 # Clone the repository
-git clone git@github.com:frank-graves/aiprobe.git
+git clone https://github.com/frank-graves/aiprobe
 cd aiprobe
 
 # Install in editable mode with development dependencies
